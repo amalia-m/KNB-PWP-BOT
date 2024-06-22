@@ -1,6 +1,6 @@
 import telebot
 
-TOKEN = ''
+TOKEN = '...'
 
 bot = telebot.TeleBot(TOKEN)
 
@@ -41,6 +41,7 @@ def join_game(message):
             games[game_id]['player2'] = chat_id
             bot.reply_to(message,
                          "Вы присоединились к игре! Используйте /choose чтобы выбрать камень, ножницы или бумагу.")
+            bot.send_message(games[game_id]["player1"], f"{message.chat.first_name} присоединился")
             break
     else:
         bot.reply_to(message, "Нет активной игры для присоединения или уже есть два игрока.")
@@ -84,13 +85,14 @@ def determine_winner(chat_id):
     elif (player1_choice == "камень" and player2_choice == "ножницы") or \
             (player1_choice == "ножницы" and player2_choice == "бумага") or \
             (player1_choice == "бумага" and player2_choice == "камень"):
-        result = "Победил игрок 1!"
+        result = f"Победил игрок 1! Он выбрал {game['player1_choice']}"
     else:
-        result = "Победил игрок 2!"
+        result = f"Победил игрок 2! Он выбрал {game['player2_choice']}"
 
     bot.send_message(game['player1'], result)
     bot.send_message(game['player2'], result)
     del games[chat_id]  # Закончить игру и очистить состояние
+
 
 
 bot.polling()
